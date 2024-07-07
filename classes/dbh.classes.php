@@ -2,14 +2,19 @@
 
 class Dbh
 {
-    private function connect()
+    protected function connect()
     {
         try {
             $username = "root";
-            $password = "root";
-            $dbh = new PDO();
+            $password = "";
+            $dbname = "loginsystem";
+            $dbh = new PDO("mysql:host=localhost;dbname=$dbname", $username, $password);
+
+            return $dbh;
         } catch (PDOException $e) {
-            //throw $th;
+            echo "Error!: " . $e->getMessage() . "<br/>";
+            die();
         }
+
     }
 }

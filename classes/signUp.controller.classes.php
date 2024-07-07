@@ -1,6 +1,6 @@
 <?php
 
-class signUpConstr
+class signUpContr extends Signup
 {
 
     private $name;
@@ -19,6 +19,31 @@ class signUpConstr
         $this->pwdRepeat = $pwdRepeat;
     }
 
+    public function signUpUser()
+    {
+        //input validations
+        if ($this->emptyInput() === false) {
+            header('location: ../index.php?error=emptyInput');
+            exit();
+        }
+        if ($this->invalidUid() === false) {
+            header('location: ../index.php?error=invalidUid');
+            exit();
+        }
+        if ($this->invalidEmail() === false) {
+            header('location: ../index.php?error=invalidEmail');
+            exit();
+        }
+        if ($this->pwdMatch() === false) {
+            header('location: ../index.php?error=pwdMatch');
+            exit();
+        }
+        if ($this->uidTaken() === false) {
+            header('location: ../index.php?error=uidTaken');
+            exit();
+        }
+        $this->setUsers($this->name, $this->uid, $this->email, $this->pwd);
+    }
     private function invalidUid()
     {
         $result = true;
@@ -30,7 +55,7 @@ class signUpConstr
     private function emptyInput()
     {
         $result = false;
-        if (empty($this->name) || empty($this->uid) || empty($this->email) || empty($this->pwd) || empty($this->pwdRepeat)) {
+        if (!empty($this->name) || !empty($this->uid) || !empty($this->email) || !empty($this->pwd) || !empty($this->pwdRepeat)) {
             $result = true;
         }
         return $result;
@@ -50,6 +75,15 @@ class signUpConstr
     {
         $result = true;
         if ($this->pwd !== $this->pwdRepeat) {
+            $result = false;
+        }
+        return $result;
+    }
+
+    private function uidTaken()
+    {
+        $result = true;
+        if (!$this->checkUser($this->uid, $this->email)) {
             $result = false;
         }
         return $result;
